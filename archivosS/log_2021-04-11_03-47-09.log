@@ -1,0 +1,8 @@
+2021-04-11 03:47:09 INFO     Conectado a LAPTOP-GS9DBS5C en el puerto 55555
+2021-04-11 03:47:11 INFO     Archivo a enviar: 100MB.zip con tamaño de 100 MB
+2021-04-11 03:47:12 INFO     Número de clientes: 1
+2021-04-11 03:47:12 INFO     UDP Connected to LAPTOP-GS9DBS5C on port 50000
+2021-04-11 03:47:18 INFO     Conexión con éxitosa con 192.168.1.5:51903. Asignado id: 0
+2021-04-11 03:47:18 INFO     Cliente #0 iniciado
+2021-04-11 03:47:18 INFO     SERVER: reiniciando threads
+2021-04-11 03:47:19 INFO     El cliente #0 está listo para recibir

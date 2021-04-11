@@ -1,0 +1,6 @@
+2021-04-11 03:44:09 INFO     Cliente comenzará a recibir información
+2021-04-11 03:44:09 INFO     Cliente 0 recibirá archivo 0–Prueba-1.zip con peso 104865944
+2021-04-11 03:44:10 INFO     Cliente 0 envia confirmación de estado preparado para recibir archivo
+2021-04-11 03:44:11 INFO     Cliente 0 recibe el primer paquete del archivo
+2021-04-11 03:44:11 INFO     Se recibe el hash junto con el archivo 
+2021-04-11 03:44:11 INFO     Hash erroneo. Archivo incorrecto
