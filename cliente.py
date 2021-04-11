@@ -21,8 +21,7 @@ bytesToSendFirstMsg = str.encode(msgFromClient)
 def main():
 
     filesize = 104865944
-    print(socket.gethostname())
-    host = socket.gethostname()
+    host = "172.31.89.253"
     puerto = 55555
     print('Hola, Cliente')
     fecha = datetime.datetime.today().strftime('%Y-%m-%d_%H-%M-%S')

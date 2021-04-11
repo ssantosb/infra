@@ -51,9 +51,9 @@ def threaded(serversocket, socketC, address, idCli):
         numBytes = 0
         data = enviar.read()
         while (data):
-            print("Hola")
+	    time.sleep(0.05)
             rta = serversocket.sendto(data, address)
-            print("Hola")
+            print(numBytes)
 
             if(rta):
                 numBytes += rta
@@ -85,7 +85,7 @@ def main():
     logging.basicConfig(filename=nombreLog, level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S',
                         format='%(asctime)s %(levelname)-8s %(message)s')
 
-    host = socket.gethostname()
+    host = "0.0.0.0"
     puerto = 55555
     logging.info('Conectado a %s en el puerto %s', host, puerto)
 
