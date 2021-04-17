@@ -6,7 +6,7 @@ import time
 import datetime
 import tqdm
 
-size = 2**15
+size = 2**10
 msgFromClientLastc = 'Thanks, UDP Server. I finished. HASH CORRECT'
 msgFromClientLastic = 'Thanks, UDP Server. I finished. HASH INCORRECT'
 
@@ -21,7 +21,7 @@ bytesToSendFirstMsg = str.encode(msgFromClient)
 def main():
 
     filesize = 104865944
-    host = "172.31.89.253"
+    host = socket.gethostname()
     puerto = 55555
     print('Hola, Cliente')
     fecha = datetime.datetime.today().strftime('%Y-%m-%d_%H-%M-%S')

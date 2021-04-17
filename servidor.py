@@ -13,7 +13,7 @@ archivo = None
 lock = threading.Lock()
 oks = []
 
-size = 2**15
+size = 2**10
 
 
 def threaded(serversocket, socketC, address, idCli):
@@ -49,7 +49,8 @@ def threaded(serversocket, socketC, address, idCli):
 
         tiempoIni = time.time()
         numBytes = 0
-        data = enviar.read()
+        data = enviar.read(size)
+
         while (data):
             time.sleep(0.05)
             rta = serversocket.sendto(data, address)

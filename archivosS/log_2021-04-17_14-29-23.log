@@ -1,0 +1,8 @@
+2021-04-17 14:29:23 INFO     Conectado a 0.0.0.0 en el puerto 55555
+2021-04-17 14:29:25 INFO     Archivo a enviar: 100MB.zip con tamaño de 100 MB
+2021-04-17 14:29:26 INFO     Número de clientes: 1
+2021-04-17 14:29:26 INFO     UDP Connected to 0.0.0.0 on port 50000
+2021-04-17 14:29:29 INFO     Conexión con éxitosa con 192.168.1.20:59256. Asignado id: 0
+2021-04-17 14:29:29 INFO     Cliente #0 iniciado
+2021-04-17 14:29:29 INFO     SERVER: reiniciando threads
+2021-04-17 14:29:31 INFO     El cliente #0 está listo para recibir

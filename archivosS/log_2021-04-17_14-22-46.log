@@ -1,0 +1,8 @@
+2021-04-17 14:22:46 INFO     Conectado a LAPTOP-0PJOI0SQ en el puerto 55555
+2021-04-17 14:22:48 INFO     Archivo a enviar: 100MB.zip con tamaño de 100 MB
+2021-04-17 14:22:51 INFO     Número de clientes: 1
+2021-04-17 14:22:51 INFO     UDP Connected to LAPTOP-0PJOI0SQ on port 50000
+2021-04-17 14:23:07 INFO     Conexión con éxitosa con 192.168.1.20:59206. Asignado id: 0
+2021-04-17 14:23:07 INFO     Cliente #0 iniciado
+2021-04-17 14:23:07 INFO     SERVER: reiniciando threads
+2021-04-17 14:23:10 INFO     El cliente #0 está listo para recibir
