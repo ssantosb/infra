@@ -52,7 +52,7 @@ def threaded(serversocket, socketC, address, idCli):
         data = enviar.read(size)
 
         while (data):
-            #time.sleep(0.05)
+            time.sleep(0.01)
             rta = serversocket.sendto(data, address)
             print(numBytes)
 
