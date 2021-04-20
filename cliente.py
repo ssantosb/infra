@@ -21,7 +21,7 @@ bytesToSendFirstMsg = str.encode(msgFromClient)
 def main():
 
     filesize = 104865944
-    host = socket.gethostname()
+    host = "35.172.134.91"
     puerto = 55555
     print('Hola, Cliente')
     fecha = datetime.datetime.today().strftime('%Y-%m-%d_%H-%M-%S')
@@ -32,6 +32,7 @@ def main():
     print(hs)
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((host, puerto))
+    sock.settimeout(1)
     print("Llegue")
 
     puertoUDP = 50000

@@ -124,6 +124,7 @@ def main():
 
     serversocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     serversocket.bind((host, puertoUDP))
+    serversocket.settimeout(1)
 
     threads = []
     recibir = True
