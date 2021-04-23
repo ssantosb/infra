@@ -7,11 +7,22 @@ import datetime
 import tqdm
 import threading
 
+size = 2**10
+msgFromClientLastc = 'Thanks, UDP Server. I finished. HASH CORRECT'
+msgFromClientLastic = 'Thanks, UDP Server. I finished. HASH INCORRECT'
+
+bytesToSendLastMsgc = str.encode(msgFromClientLastc)
+bytesToSendLastMsgic = str.encode(msgFromClientLastic)
+
+msgFromClient = 'Hello UDP Server, I am ready'
+
+bytesToSendFirstMsg = str.encode(msgFromClient)
+
 
 def main():
 
     filesize = 104865944
-    host = '34.205.154.39'
+    host = '54.172.254.195'
     puerto = 55555
     print('Hola, Cliente')
     fecha = datetime.datetime.today().strftime('%Y-%m-%d_%H-%M-%S')
@@ -22,6 +33,14 @@ def main():
     print(hs)
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((host, puerto))
+    sock.settimeout(1)
+    print("Llegue")
+
+    puertoUDP = 50000
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    # Connect to server on local computer
+    s.sendto(bytesToSendFirstMsg, (host, puertoUDP))\
+
     print("Se conecto satisfactoriamente con el host ",
           host, " en el puerto: ", puerto)
     print("Cliente comenzará a recibir información")
@@ -39,9 +58,7 @@ def main():
     logging.info("Cliente " + idcliente + " recibirá archivo " +
                  str(filename) + " con peso " + str(filesize))
 
-    #input("Presione enter para enviar la confirmación de que se encuentra listo para recibir el archivo")
-
-    # sock.send(str(1).encode('utf8'))
+    sock.send(str(1).encode('utf8'))
 
     print("Cliente ", str(idcliente),
           " envia confirmación de estado preparado para recibir archivo")
@@ -57,7 +74,7 @@ def main():
 
     with open(filename, "wb") as f:
         while True:
-            data = sock.recv(1048576)
+            data, address = s.recvfrom(size)
             dataTotal += data
 
             f.write(data)
@@ -70,10 +87,8 @@ def main():
                              " recibe el primer paquete del archivo")
                 inicio = time.time()
             if not data:
-                print("Cliente ", str(idcliente),
-                      " Termino el envío con exito")
-                logging.info("Cliente " + str(idcliente) +
-                             " Termino el envio con exito")
+                print("Termino el envío con exito")
+                logging.info("Termino el envio con exito")
                 fin = time.time()
                 break
             elif (data.__contains__(b"Hash:")):
@@ -85,30 +100,26 @@ def main():
                 i = data.find(b"Hash:")
                 recibido = data[i+5:]
                 recibidoD = recibido.decode()
-                logging.info("Cliente " + str(idcliente) +
-                             " Se recibe el hash junto con el archivo ")
-                print("Cliente ", str(idcliente),
-                      " Se recibe el siguiente hash ", recibidoD)
-                print("Cliente ", str(idcliente),
-                      " Se crea el siguiente hash de prueba ", prueba)
+                logging.info("Se recibe el hash junto con el archivo ")
+                print("Se recibe el siguiente hash ", recibidoD)
+                print("Se crea el siguiente hash de prueba ", prueba)
 
                 if hs.hexdigest() == recibido.decode():
-                    print("Cliente ", str(idcliente),
-                          " El hash fue verificado. Es correcto :)")
-                    logging.info("Cliente " + str(idcliente) +
-                                 " Hash verificado. Archivo correcto")
+                    print("El hash fue verificado. Es correcto :)")
+                    logging.info("Hash verificado. Archivo correcto")
+                    s.sendto(bytesToSendLastMsgc, (host, puertoUDP))
+
                 else:
                     print(
-                        "Cliente ", str(idcliente), " El hash no pudo ser verificado. Hay un problema con el archivo recibido :(")
+                        "El hash no pudo ser verificado. Hay un problema con el archivo recibido :(")
                     logging.info("Hash erroneo. Archivo incorrecto")
+                    s.sendto(bytesToSendLastMsgic, (host, puertoUDP))
 
-    logging.info('Cliente: %s ,Bytes recibidos: %s , paquetes recibidos: %s , tiempo utilizado: %s, tasa de transferencia: %s', idcliente, len(
+    logging.info('Bytes recibidos: %s , paquetes recibidos: %s , tiempo utilizado: %s, tasa de transferencia: %s', len(
         dataTotal), len(dataTotal)/1048576, (fin-inicio), (len(dataTotal)/(fin-inicio)))
 
+    s.close()
     sock.close()
-
-
-exitFlag = 0
 
 
 class myThread (threading.Thread):
@@ -120,21 +131,31 @@ class myThread (threading.Thread):
 
     def run(self):
         print("Starting " + self.name)
-        main()
+        main2()
         print("Exiting " + self.name)
 
 
 # Create new threads
 thread0 = myThread(0, "Thread-0", 0)
-thread1 = myThread(1, "Thread-1", 1)
-thread2 = myThread(2, "Thread-2", 2)
-thread3 = myThread(3, "Thread-3", 3)
-thread4 = myThread(4, "Thread-4", 4)
+#thread1 = myThread(1, "Thread-1", 1)
+#thread2 = myThread(2, "Thread-2", 2)
+#thread3 = myThread(3, "Thread-3", 3)
+#thread4 = myThread(4, "Thread-4", 4)
+#thread5 = myThread(5, "Thread-5", 5)
+#thread6 = myThread(6, "Thread-6", 6)
+#thread7 = myThread(7, "Thread-7", 7)
+#thread8 = myThread(8, "Thread-8", 8)
+#thread9 = myThread(9, "Thread-9", 9)
 
 
 # Start new Threads
 thread0.start()
-thread1.start()
-thread2.start()
-thread3.start()
-thread4.start()
+# thread1.start()
+# thread2.start()
+# thread3.start()
+# thread4.start()
+# thread5.start()
+# thread6.start()
+# thread7.start()
+# thread8.start()
+# thread9.start()

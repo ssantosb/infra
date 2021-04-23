@@ -13,40 +13,59 @@ archivo = None
 lock = threading.Lock()
 oks = []
 
+size = 2**10
 
-def threaded(socketC, idCli):
+
+def threaded(serversocket, socketC, address, idCli):
     global oks
     global ready
     global lock
     m = hashlib.sha256()
     logging.info('Cliente #%i iniciado', idCli)
 
-    # ok = int(socketC.recv(1024).decode('utf8'))
+    ok = int(socketC.recv(1024).decode('utf8'))
     logging.info('El cliente #%i está listo para recibir', idCli)
-    # lock.acquire()
-    # oks[idCli] = 1
-    # esperar = False
-    # for i in oks:
-    #     if i == 0:
-    #         esperar = True
-    #         break
-    # ready = not esperar
-    # lock.release()
-    #
-    # while esperar:
-    #     esperar = not ready
+    lock.acquire()
+    oks[idCli] = 1
+    esperar = False
+    for i in oks:
+        if i == 0:
+            esperar = True
+            break
+    ready = not esperar
+    lock.release()
+
+    fileHash = open(archivo, "rb")
+    dataHash = fileHash.read()
+    m.update(dataHash)
+    fileHash.close()
+
+    filesize = os.path.getsize(archivo)
+
+    while esperar:
+        esperar = not ready
 
     with open(archivo, 'rb') as enviar:
-        data = enviar.read()
-        m.update(data)
+
         tiempoIni = time.time()
-        numBytes = socketC.send(data)
+        numBytes = 0
+        data = enviar.read(size)
+
+        while (data):
+            time.sleep(0.008)
+            rta = serversocket.sendto(data, address)
+            print(numBytes)
+
+            if(rta):
+                numBytes += rta
+                data = enviar.read(size)
+
         logging.info(
             'Archivo enviado al cliente #%i, bytes enviados: %i', idCli, numBytes)
         print('Archivo enviado al cliente ' + str(idCli))
 
         hashM = m.hexdigest()
-        numBytes += socketC.send(('Hash:' + hashM).encode())
+        numBytes += serversocket.sendto(('Hash:' + hashM).encode(), address)
         tiempoFin = time.time()
         logging.info(
             'Hash enviado al cliente #%i, bytes enviados en total: %i', idCli, numBytes)
@@ -54,7 +73,7 @@ def threaded(socketC, idCli):
 
         logging.info('Tiempo del envío al cliente #%i: %i',
                      idCli, (tiempoFin-tiempoIni))
-
+    serversocket.close()
     socketC.close()
 
 
@@ -67,7 +86,7 @@ def main():
     logging.basicConfig(filename=nombreLog, level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S',
                         format='%(asctime)s %(levelname)-8s %(message)s')
 
-    host = '0.0.0.0'
+    host = "0.0.0.0"
     puerto = 55555
     logging.info('Conectado a %s en el puerto %s', host, puerto)
 
@@ -78,13 +97,17 @@ def main():
     socketS.listen(5)
     print('Escuchando...')
     elegirArchivo = int(
-        input('¿Qué archivo desea enviar? 1. 100 MB \t 2. 250 MB \n'))
+        input('¿Qué archivo desea enviar? 1. 100 MB \t 2. 250 MB \t 3. Zimzalabim.mp4 \n'))
     if elegirArchivo == 1:
         archivo = './data/100MB.zip'
         logging.info('Archivo a enviar: 100MB.zip con tamaño de 100 MB')
-    else:
+    elif elegirArchivo == 2:
         archivo = './data/250MB.zip'
         logging.info('Archivo a enviar: 250MB.zip con tamaño de 250 MB')
+    else:
+        archivo = './data/Zimzalabim.mp4'
+        logging.info('Archivo a enviar: Zimzalabim.mp4')
+
     print('Se ha seleccionado el archivo ', archivo)
 
     filesize = os.path.getsize(archivo)
@@ -96,26 +119,45 @@ def main():
     for i in range(numClientes):
         oks.append(0)
 
+    puertoUDP = 50000
+    logging.info('UDP Connected to %s on port %s', host, puertoUDP)
+
+    serversocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    serversocket.bind((host, puertoUDP))
+
     threads = []
     recibir = True
     while recibir:
         (socketC, direccion) = socketS.accept()
-        socketC.send((str(len(threads)) + '–Prueba-' +
-                      str(numClientes) + '.zip|' + str(filesize)).encode('utf8'))
-        print('Se ha conectado el cliente ' + str(len(threads)) +
-              '(' + str(direccion[0]) + ':' + str(direccion[1]) + ')')
-        logging.info('Conexión con éxitosa con %s:%s. Asignado id: %i',
-                     direccion[0], direccion[1], len(threads))
-        threadAct = threading.Thread(
-            target=threaded, args=(socketC, len(threads)))
-        threads.append(threadAct)
-        if len(threads) == numClientes:
-            recibir = False
-            for i in threads:
-                i.start()
-            threads = []
+        data, address = serversocket.recvfrom(size)
 
-    socketS.close()
+        if(archivo == './data/Zimzalabim.mp4'):
+            socketC.send((str(len(threads)) + '–Prueba-' +
+                          str(numClientes) + '.mp4|' + str(filesize)).encode('utf8'))
+        else:
+            socketC.send((str(len(threads)) + '–Prueba-' +
+                          str(numClientes) + '.zip|' + str(filesize)).encode('utf8'))
+
+        print('Mensaje recibido: ', data)
+        if not data.__contains__(b'Thanks, UDP Server. I finished'):
+            print('Se ha conectado el cliente ' + str(len(threads)) +
+                  '(' + str(direccion[0]) + ':' + str(direccion[1]) + ')')
+            logging.info('Conexión con éxitosa con %s:%s. Asignado id: %i',
+                         direccion[0], direccion[1], len(threads))
+
+            t = threading.Thread(target=threaded, args=(
+                serversocket, socketC, address, len(threads)))
+            threads.append(t)
+
+            if len(threads) == numClientes:
+                recibir = False
+                for i in threads:
+                    i.start()
+                threads = []
+                logging.info('SERVER: reiniciando threads')
+        else:
+            logging.info("%s. Cliente: %s, port: %s",
+                         data, address[0], address[1])
 
 
 main()
