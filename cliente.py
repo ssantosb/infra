@@ -32,11 +32,11 @@ def main():
     print(hs)
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((host, puerto))
-    sock.settimeout(1)
     print("Llegue")
 
     puertoUDP = 50000
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.settimeout(2)
     # Connect to server on local computer
     s.sendto(bytesToSendFirstMsg, (host, puertoUDP))\
 
